@@ -1,20 +1,13 @@
-all:
-  children:
-    ubuntu:
-      hosts:
-        server1:
-          ansible_host: 192.168.56.103
-          os_type: Ubuntu
-          ansible_user: interno
+[web_servers]
+192.168.56.101 ansible_user=jeraldinterno
+192.168.56.103 ansible_user=interno
+192.168.56.104 ansible_user=internos2
 
-        server2:
-          ansible_host: 192.168.56.104
-          os_type: Ubuntu
-          ansible_user: internos2
+[db_servers]
+192.168.56.101 ansible_user=jeraldinterno
 
-    linuxservers:
-      children:
-        ubuntu:
-    servers:
-      hosts:
-        server1:
+[file_servers]
+192.168.56.103 ansible_user=interno
+
+[workstations]
+192.168.56.104 ansible_user=internos2
