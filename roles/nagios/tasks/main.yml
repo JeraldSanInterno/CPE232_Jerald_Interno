@@ -1,2 +1,129 @@
----
-# tasks file for roles/nagios
+# 1. Install Ubuntu/Debian Dependencies
+- name: Install dependencies for Ubuntu/Debian
+  ansible.builtin.apt:
+    name:
+      - build-essential
+      - apache2
+      - php
+      - libapache2-mod-php
+      - libgd-dev
+      - libssl-dev
+      - unzip
+      - tar
+      - make
+      - gcc
+    state: present
+    update_cache: yes
+  when: ansible_facts['os_family'] == "Debian"
+
+# 2. Install CentOS/RedHat Dependencies
+- name: Install dependencies for CentOS/RedHat
+  ansible.builtin.package:
+    name:
+      - gcc
+      - glibc
+      - glibc-common
+      - make
+      - gettext
+      - automake
+      - autoconf
+      - wget
+      - openssl-devel
+      - net-snmp
+      - net-snmp-utils
+      - httpd
+      - php
+      - gd
+      - gd-devel
+      - perl
+      - unzip
+    state: present
+  when: ansible_facts['os_family'] == "RedHat"
+
+# 3. Create Nagios User and Group
+- name: Create nagios user group
+  ansible.builtin.group:
+    name: nagcmd
+    state: present
+
+- name: Create nagios user
+  ansible.builtin.user:
+    name: nagios
+    groups: nagcmd
+    append: yes
+    state: present
+
+- name: Add web server user to nagcmd group (Debian)
+  ansible.builtin.user:
+    name: www-data
+    groups: nagcmd
+    append: yes
+  when: ansible_facts['os_family'] == "Debian"
+
+- name: Add web server user to nagcmd group (RedHat)
+  ansible.builtin.user:
+    name: apache
+    groups: nagcmd
+    append: yes
+  when: ansible_facts['os_family'] == "RedHat"
+
+# 4. Download and Extract Nagios Core Source
+- name: Download Nagios Core source
+  ansible.builtin.get_url:
+    url: https://assets.nagios.com/downloads/nagioscore/releases/nagios-4.4.14.tar.gz
+    dest: /tmp/nagios-4.4.14.tar.gz
+
+- name: Extract Nagios Core
+  ansible.builtin.unarchive:
+    src: /tmp/nagios-4.4.14.tar.gz
+    dest: /tmp
+    remote_src: yes
+
+# 5. Compile and Install Nagios Core
+- name: Configure Nagios Core
+  ansible.builtin.command:
+    cmd: ./configure --with-command-group=nagcmd --with-ssl=/usr/bin/openssl --with-ssl-lib=/usr/lib/x86_64-linux-gnu
+    chdir: /tmp/nagios-4.4.14
+    creates: /tmp/nagios-4.4.14/Makefile
+
+- name: Compile Nagios Core
+  ansible.builtin.command:
+    cmd: make all
+    chdir: /tmp/nagios-4.4.14
+
+- name: Run Nagios Install Targets
+  ansible.builtin.command:
+    cmd: "make {{ item }}"
+    chdir: /tmp/nagios-4.4.14
+  loop:
+    - install
+    - install-init
+    - install-commandmode
+    - install-config
+    - install-webconf
+
+# 6. Web Server & Service Management
+- name: Enable Apache CGI module (Debian)
+  ansible.builtin.command:
+    cmd: a2enmod cgi
+  when: ansible_facts['os_family'] == "Debian"
+
+- name: Start and Enable Web Server (Debian)
+  ansible.builtin.service:
+    name: apache2
+    state: started
+    enabled: yes
+  when: ansible_facts['os_family'] == "Debian"
+
+- name: Start and Enable Web Server (RedHat)
+  ansible.builtin.service:
+    name: httpd
+    state: started
+    enabled: yes
+  when: ansible_facts['os_family'] == "RedHat"
+
+- name: Start and Enable Nagios Service
+  ansible.builtin.service:
+    name: nagios
+    state: started
+    enabled: yes
