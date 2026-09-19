@@ -1,4 +1,3 @@
-# 1. Install Ubuntu/Debian Dependencies
 - name: Install dependencies for Ubuntu/Debian
   ansible.builtin.apt:
     name:
@@ -16,7 +15,6 @@
     update_cache: yes
   when: ansible_facts['os_family'] == "Debian"
 
-# 2. Install CentOS/RedHat Dependencies
 - name: Install dependencies for CentOS/RedHat
   ansible.builtin.package:
     name:
@@ -40,7 +38,6 @@
     state: present
   when: ansible_facts['os_family'] == "RedHat"
 
-# 3. Create Nagios User and Group
 - name: Create nagios user group
   ansible.builtin.group:
     name: nagcmd
@@ -67,7 +64,6 @@
     append: yes
   when: ansible_facts['os_family'] == "RedHat"
 
-# 4. Download and Extract Nagios Core Source
 - name: Download Nagios Core source
   ansible.builtin.get_url:
     url: https://assets.nagios.com/downloads/nagioscore/releases/nagios-4.4.14.tar.gz
@@ -79,7 +75,6 @@
     dest: /tmp
     remote_src: yes
 
-# 5. Compile and Install Nagios Core
 - name: Configure Nagios Core
   ansible.builtin.command:
     cmd: ./configure --with-command-group=nagcmd --with-ssl=/usr/bin/openssl --with-ssl-lib=/usr/lib/x86_64-linux-gnu
@@ -102,7 +97,6 @@
     - install-config
     - install-webconf
 
-# 6. Web Server & Service Management
 - name: Enable Apache CGI module (Debian)
   ansible.builtin.command:
     cmd: a2enmod cgi
