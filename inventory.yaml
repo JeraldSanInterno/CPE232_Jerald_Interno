@@ -1,0 +1,13 @@
+[web_servers]
+192.168.56.101 ansible_user=jeraldinterno
+192.168.56.103 ansible_user=interno
+192.168.56.104 ansible_user=internos2
+
+[db_servers]
+192.168.56.101 ansible_user=jeraldinterno
+
+[file_servers]
+192.168.56.103 ansible_user=interno
+
+[workstations]
+192.168.56.104 ansible_user=internos2
