@@ -1,0 +1,23 @@
+all:
+  children:
+    web_servers:
+      hosts:
+        server1:
+          ansible_host: 192.168.56.103
+          ansible_user: interno
+        server2:
+          ansible_host: 192.168.56.104
+          ansible_user: internos2
+        centos_vm:
+          ansible_host: 192.168.56.101
+          ansible_user: jeraldinterno
+    db_servers:
+      hosts:
+        centos_vm:
+          ansible_host: 192.168.56.101
+          ansible_user: jeraldinterno
+    file_servers:
+      hosts:
+        server1:
+          ansible_host: 192.168.56.103
+          ansible_user: interno
