@@ -1,0 +1,30 @@
+---
+- name: Install Apache and PHP across Multi-OS Distributions
+  hosts: all
+  become: true
+
+  tasks:
+    #task 1: Update the repository cache for Debian/Ubuntu systems
+    - name: update repository index
+      apt:
+        update_cache: yes
+      when: ansible_distribution in ["Debian", "Ubuntu"]
+
+    #task 2: Install the Apache and PHP packages on Debian/Ubuntu systems
+    - name: install apache and php on Ubuntu
+      apt:
+        name:
+          - apache2
+          - libapache2-mod-php
+          - php
+        state: latest
+      when: ansible_distribution in ["Debian", "Ubuntu"]
+
+    #task 3: Install the Apache (httpd) and PHP packages on CentOS systems
+    - name: install apache and php on CentOS
+      dnf:
+        name:
+          - httpd
+          - php
+        state: latest
+      when: ansible_distribution == "CentOS"
