@@ -73,3 +73,21 @@
         name: samba
         state: latest
       tags: samba
+
+
+# refactored role-based site.yml
+---
+- hosts: web_servers
+  become: true
+  roles:
+    - { role: webserver, tags: ['web', 'apache'] }
+
+- hosts: db_servers
+  become: true
+  roles:
+    - { role: dbserver, tags: ['db', 'mariadb'] }
+
+- hosts: file_servers
+  become: true
+  roles:
+    - { role: fileserver, tags: ['file', 'samba'] }
