@@ -1,0 +1,36 @@
+---
+- name: Install Nagios and Plugins (Ubuntu)
+  apt:
+    name:
+      - nagios4
+      - nagios-plugins-contrib
+      - nagios-nrpe-plugin
+    state: present
+    update_cache: yes
+  when: ansible_distribution == "Ubuntu"
+
+- name: Ensure Nagios service is started and enabled (Ubuntu)
+  service:
+    name: nagios4
+    state: started
+    enabled: yes
+  when: ansible_distribution == "Ubuntu"
+
+- name: Install EPEL repository and Nagios (CentOS)
+  dnf:
+    name:
+      - epel-release
+      - nagios
+      - nagios-plugins-all
+    state: present
+  when: ansible_distribution == "CentOS"
+
+- name: Ensure Nagios and httpd services are started and enabled (CentOS)
+  service:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  loop:
+    - nagios
+    - httpd
+  when: ansible_distribution == "CentOS"
