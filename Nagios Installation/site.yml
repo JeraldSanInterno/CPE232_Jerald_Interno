@@ -1,0 +1,7 @@
+---
+- name: Deploy Nagios Core on Ubuntu and CentOS
+  hosts: nagios_servers
+  become: true
+  roles:
+    - nagios
+

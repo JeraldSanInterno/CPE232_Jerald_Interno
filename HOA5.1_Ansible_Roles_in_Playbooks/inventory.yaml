@@ -1,0 +1,28 @@
+all:
+  children:
+    ubuntu:
+      vars:
+        apache_package: apache2
+        php_package: php
+      hosts:
+        server1:
+          ansible_host: 192.168.56.103
+          ansible_user: interno
+          os_type: Ubuntu
+        server2:
+          ansible_host: 192.168.56.104
+          ansible_user: internos2
+          os_type: Ubuntu
+    centos:
+      vars:
+        apache_package: httpd
+        php_package: php
+      hosts:
+        centos_vm:
+          ansible_host: 192.168.56.101
+          ansible_user: jeraldinterno
+          os_type: CentOS
+    linuxservers:
+      children:
+        ubuntu:
+        centos:

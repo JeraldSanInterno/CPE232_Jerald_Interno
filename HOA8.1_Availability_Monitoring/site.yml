@@ -1,0 +1,6 @@
+---
+- name: Deploy Nagios Enterprise Availability Monitoring
+  hosts: nagios_servers
+  become: true
+  roles:
+    - nagios
